@@ -81,7 +81,21 @@ export const useResumeStore = create(
     (set) => ({
       resumeData: initialData,
       
-      setResumeData: (data) => set({ resumeData: data }),
+      setResumeData: (data) => set((state) => {
+        // Deep merge to ensure arrays and objects exist, preventing crashes on old saves
+        const mergedData = {
+          ...initialData,
+          ...data,
+          personalInfo: { ...initialData.personalInfo, ...(data?.personalInfo || {}) },
+          experience: data?.experience || [],
+          education: data?.education || [],
+          skills: data?.skills || [],
+          projects: data?.projects || [],
+          certifications: data?.certifications || [],
+          customSections: data?.customSections || [],
+        };
+        return { resumeData: mergedData };
+      }),
 
       updatePersonalInfo: (data) =>
         set((state) => ({
