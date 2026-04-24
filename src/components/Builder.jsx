@@ -7,14 +7,16 @@ import { exportToPDF } from '../utils/exportPDF';
 import { useAuthStore } from '../store/authStore';
 import { db } from '../utils/firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { Download, FileText, Settings, Eye, Menu, LogOut, Cloud, Type, ShieldCheck } from 'lucide-react';
+import { Download, FileText, Settings, Eye, Menu, LogOut, Cloud, Type, ShieldCheck, Sparkles } from 'lucide-react';
 import { useResumeStore } from '../store/resumeStore';
+import AIGuideModal from './AIGuideModal';
 
 function Builder() {
   const { activeTemplate, setActiveTemplate, isPreviewMode, togglePreviewMode, fontScale, setFontScale } = useUIStore();
   const { resumeData } = useResumeStore();
   const { logOut, user } = useAuthStore();
   const printRef = useRef(null);
+  const [isAIGuideOpen, setIsAIGuideOpen] = React.useState(false);
 
   const handleExportDocx = () => {
     exportToDocx(resumeData);
@@ -147,6 +149,15 @@ function Builder() {
                <option value={1.0}>Standard</option>
                <option value={1.1}>Large</option>
              </select>
+             
+             <div className="w-px h-6 bg-gray-300 mx-1 hidden lg:block"></div>
+             
+             <button
+                onClick={() => setIsAIGuideOpen(true)}
+                className="items-center gap-1.5 px-3 py-2 text-sm font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors shadow-sm hidden lg:flex"
+             >
+                <Sparkles className="w-4 h-4" /> AI Guide
+             </button>
           </div>
 
           <div className="flex items-center gap-3">
@@ -172,6 +183,9 @@ function Builder() {
            <TemplateRenderer printRef={printRef} />
         </div>
       </div>
+      
+      {/* Modals */}
+      <AIGuideModal isOpen={isAIGuideOpen} onClose={() => setIsAIGuideOpen(false)} />
     </div>
   );
 }
