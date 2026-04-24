@@ -39,8 +39,11 @@ export const useUIStore = create(
       activeTemplate: TEMPLATES.ATS_PURIST,
       activeFormStep: FORM_STEPS.PERSONAL_INFO,
       isPreviewMode: false, // For mobile responsiveness
+      fontScale: 1.0, // Scale multiplier
 
       setActiveTemplate: (template) => set({ activeTemplate: template }),
+      
+      setFontScale: (scale) => set({ fontScale: scale }),
       
       setActiveFormStep: (step) => set({ activeFormStep: step }),
 

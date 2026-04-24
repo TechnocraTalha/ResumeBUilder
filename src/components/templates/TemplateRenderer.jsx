@@ -8,7 +8,8 @@ import CreativePortfolio from './CreativePortfolio';
 import MinimalistAcademic from './MinimalistAcademic';
 
 export default function TemplateRenderer({ printRef }) {
-  const { activeTemplate } = useUIStore();
+  const { activeTemplate, fontScale } = useUIStore();
+  const scale = fontScale || 1.0;
 
   const renderTemplate = () => {
     switch (activeTemplate) {
@@ -26,10 +27,16 @@ export default function TemplateRenderer({ printRef }) {
     <div className="flex justify-center items-start origin-top scale-[0.6] sm:scale-[0.8] lg:scale-[0.9] xl:scale-100">
       <div 
         ref={printRef}
-        className="bg-white shadow-xl mx-auto  text-left"
-        style={{ width: '210mm', minHeight: '296.5mm', padding: '0' }} // A4 dimensions with margin for pixel rounding
+        className="bg-white shadow-xl mx-auto text-left overflow-hidden relative"
+        style={{ width: '210mm', minHeight: '296.5mm', padding: '0' }} // A4 dimensions
       >
-        <div className="w-full bg-white">
+        <div style={{ 
+          transform: `scale(${scale})`, 
+          transformOrigin: 'top left', 
+          width: `${100 / scale}%`, 
+          minHeight: `${100 / scale}%`,
+          backgroundColor: 'white' 
+        }}>
           {renderTemplate()}
         </div>
       </div>

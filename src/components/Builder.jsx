@@ -7,11 +7,11 @@ import { exportToPDF } from '../utils/exportPDF';
 import { useAuthStore } from '../store/authStore';
 import { db } from '../utils/firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { Download, FileText, Settings, Eye, Menu, LogOut, Cloud } from 'lucide-react';
+import { Download, FileText, Settings, Eye, Menu, LogOut, Cloud, Type } from 'lucide-react';
 import { useResumeStore } from '../store/resumeStore';
 
 function Builder() {
-  const { activeTemplate, setActiveTemplate, isPreviewMode, togglePreviewMode } = useUIStore();
+  const { activeTemplate, setActiveTemplate, isPreviewMode, togglePreviewMode, fontScale, setFontScale } = useUIStore();
   const { resumeData } = useResumeStore();
   const { logOut, user } = useAuthStore();
   const printRef = useRef(null);
@@ -119,6 +119,20 @@ function Builder() {
                <option value={TEMPLATES.ATS_ORDERED}>ATS Ordered (Strict Flow)</option>
                <option value={TEMPLATES.CREATIVE_PORTFOLIO}>Creative (Portfolio)</option>
                <option value={TEMPLATES.MINIMALIST_ACADEMIC}>Minimalist (Academic)</option>
+             </select>
+             
+             <div className="w-px h-6 bg-gray-300 mx-1 hidden sm:block"></div>
+             
+             <Type className="w-5 h-5 text-gray-500 hidden sm:block" />
+             <select
+               value={fontScale}
+               onChange={(e) => setFontScale(parseFloat(e.target.value))}
+               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 outline-none font-medium transition-all hover:bg-gray-100 cursor-pointer w-[110px]"
+             >
+               <option value={0.8}>Smallest</option>
+               <option value={0.9}>Small</option>
+               <option value={1.0}>Standard</option>
+               <option value={1.1}>Large</option>
              </select>
           </div>
 

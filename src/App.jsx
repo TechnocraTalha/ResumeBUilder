@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Builder from './components/Builder';
 import Login from './components/auth/Login';
 import SignUp from './components/auth/SignUp';
+import AdminPanel from './components/AdminPanel';
 import { useAuthStore } from './store/authStore';
 
 function App() {
@@ -20,12 +21,15 @@ function App() {
     );
   }
 
+  const isAdmin = user && user.email === 'talhasiddiqui240@gmail.com';
+
   return (
     <Routes>
       <Route path="/" element={<Navigate to={user ? "/builder" : "/login"} replace />} />
       <Route path="/login" element={!user ? <Login /> : <Navigate to="/builder" replace />} />
       <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/builder" replace />} />
       <Route path="/builder" element={user ? <Builder /> : <Navigate to="/login" replace />} />
+      <Route path="/admin" element={isAdmin ? <AdminPanel /> : <Navigate to="/builder" replace />} />
     </Routes>
   );
 }
