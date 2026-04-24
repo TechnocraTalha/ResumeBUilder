@@ -13,7 +13,7 @@ import { useResumeStore } from '../store/resumeStore';
 function Builder() {
   const { activeTemplate, setActiveTemplate, isPreviewMode, togglePreviewMode } = useUIStore();
   const { resumeData } = useResumeStore();
-  const { logOut } = useAuthStore();
+  const { logOut, user } = useAuthStore();
   const printRef = useRef(null);
 
   const handleExportDocx = () => {
