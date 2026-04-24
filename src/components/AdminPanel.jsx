@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../utils/firebase';
 import { useAuthStore } from '../store/authStore';
+import { useResumeStore } from '../store/resumeStore';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, FileText, Search } from 'lucide-react';
+import { ShieldCheck, FileText, Search, X, Download } from 'lucide-react';
+import TemplateRenderer from './templates/TemplateRenderer';
+import { exportToPDF } from '../utils/exportPDF';
 
 export default function AdminPanel() {
   const { user } = useAuthStore();
@@ -11,6 +14,8 @@ export default function AdminPanel() {
   const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [viewingResume, setViewingResume] = useState(null);
+  const printRef = useRef(null);
 
   useEffect(() => {
     // Extra guard to prevent flicker
@@ -120,12 +125,14 @@ export default function AdminPanel() {
                                  </span>
                               </td>
                               <td className="p-4 text-center">
-                                 {/* To view, we can push their data into a preview state, or just let admin see JSON. For now, a placeholder action. */}
                                  <button 
-                                   onClick={() => alert('View functionality requires merging with the builder view state. Data: ' + JSON.stringify(r.data.personalInfo))}
+                                   onClick={() => {
+                                      useResumeStore.getState().setResumeData(r.data);
+                                      setViewingResume(r);
+                                   }}
                                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-800"
                                  >
-                                    <FileText className="w-4 h-4" /> Preview Data
+                                    <FileText className="w-4 h-4" /> View Resume
                                  </button>
                               </td>
                            </tr>
@@ -137,6 +144,36 @@ export default function AdminPanel() {
           </div>
 
        </div>
+
+       {/* Full Resume Preview Modal */}
+       {viewingResume && (
+         <div className="fixed inset-0 z-50 bg-gray-900/90 overflow-y-auto flex flex-col items-center py-10 px-4">
+            <div className="w-full max-w-5xl flex justify-between items-center mb-4">
+               <h2 className="text-xl font-bold text-white">
+                 Viewing: {viewingResume.data?.personalInfo?.fullName}'s Resume
+               </h2>
+               <div className="flex gap-3">
+                 <button 
+                   onClick={() => exportToPDF(printRef.current, `${viewingResume.data?.personalInfo?.fullName}_Admin_Export.pdf`)}
+                   className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                 >
+                   <Download className="w-4 h-4" /> Download PDF
+                 </button>
+                 <button 
+                   onClick={() => setViewingResume(null)}
+                   className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                 >
+                   <X className="w-4 h-4" /> Close
+                 </button>
+               </div>
+            </div>
+            
+            <div className="bg-gray-200 p-4 sm:p-8 rounded-xl shadow-2xl flex justify-center w-full max-w-5xl overflow-hidden">
+               <TemplateRenderer printRef={printRef} />
+            </div>
+         </div>
+       )}
+
     </div>
   );
 }
