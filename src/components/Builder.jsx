@@ -7,7 +7,7 @@ import { exportToPDF } from '../utils/exportPDF';
 import { useAuthStore } from '../store/authStore';
 import { db } from '../utils/firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { Download, FileText, Settings, Eye, Menu, LogOut, Cloud, Type } from 'lucide-react';
+import { Download, FileText, Settings, Eye, Menu, LogOut, Cloud, Type, ShieldCheck } from 'lucide-react';
 import { useResumeStore } from '../store/resumeStore';
 
 function Builder() {
@@ -84,13 +84,26 @@ function Builder() {
             </span>
             <h1 className="text-xl font-bold text-gray-900 tracking-tight">ProResume</h1>
           </div>
-          <button 
-             onClick={logOut}
-             className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-red-600 border border-transparent hover:bg-red-50 rounded-lg transition-colors"
-             title="Sign Out"
-          >
-             <LogOut className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            {user?.email === 'talhasiddiqui240@gmail.com' && (
+              <button 
+                onClick={() => window.location.href = '/admin'}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-colors mr-2"
+              >
+                 <ShieldCheck className="w-4 h-4" /> Admin Panel
+              </button>
+            )}
+            <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
+               <Cloud className="w-3.5 h-3.5" /> Auto-Saved
+            </span>
+            <button 
+               onClick={logOut}
+               className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-red-600 border border-transparent hover:bg-red-50 rounded-lg transition-colors"
+               title="Sign Out"
+            >
+               <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </header>
 
         {/* Dynamic Form Stepper */}
