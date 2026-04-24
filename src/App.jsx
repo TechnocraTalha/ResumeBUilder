@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Builder from './components/Builder';
 import Login from './components/auth/Login';
 import SignUp from './components/auth/SignUp';
@@ -21,12 +22,15 @@ function App() {
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to={user ? "/builder" : "/login"} replace />} />
-      <Route path="/login" element={!user ? <Login /> : <Navigate to="/builder" replace />} />
-      <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/builder" replace />} />
-      <Route path="/builder" element={user ? <Builder /> : <Navigate to="/login" replace />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<Navigate to={user ? "/builder" : "/login"} replace />} />
+        <Route path="/login" element={!user ? <Login /> : <Navigate to="/builder" replace />} />
+        <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/builder" replace />} />
+        <Route path="/builder" element={user ? <Builder /> : <Navigate to="/login" replace />} />
+      </Routes>
+      <Analytics />
+    </>
   );
 }
 
