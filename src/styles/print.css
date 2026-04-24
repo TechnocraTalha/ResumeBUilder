@@ -1,0 +1,45 @@
+@media print {
+  /* Hide practically everything except the print container */
+  body * {
+    visibility: hidden;
+  }
+  
+  .print-container, .print-container * {
+    visibility: visible;
+  }
+  
+  .print-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 210mm !important;
+    height: auto !important;
+    min-height: 297mm;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    transform: scale(1) !important;
+    transform-origin: top left !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0; /* Remove default browser margins to use our own padding */
+  }
+
+  /* Force background colors and graphics to print correctly */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Prevent awkward page breaks */
+  .section-break {
+    page-break-inside: auto;
+  }
+
+  .item-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
