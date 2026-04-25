@@ -8,8 +8,15 @@ import CreativePortfolio from './CreativePortfolio';
 import MinimalistAcademic from './MinimalistAcademic';
 
 export default function TemplateRenderer({ printRef }) {
-  const { activeTemplate, fontScale } = useUIStore();
+  const { activeTemplate, fontScale, themeColor, fontFamily } = useUIStore();
   const scale = fontScale || 1.0;
+
+  const customStyles = `
+    .theme-text { color: ${themeColor} !important; }
+    .theme-bg { background-color: ${themeColor} !important; }
+    .theme-border { border-color: ${themeColor} !important; }
+    .theme-font { font-family: '${fontFamily}', sans-serif !important; }
+  `;
 
   const renderTemplate = () => {
     switch (activeTemplate) {
@@ -25,9 +32,10 @@ export default function TemplateRenderer({ printRef }) {
 
   return (
     <div className="flex justify-center items-start origin-top scale-[0.6] sm:scale-[0.8] lg:scale-[0.9] xl:scale-100">
+      <style>{customStyles}</style>
       <div 
         ref={printRef}
-        className="bg-white shadow-xl mx-auto text-left overflow-hidden relative"
+        className="bg-white shadow-xl mx-auto text-left overflow-hidden relative theme-font"
         style={{ width: '210mm', minHeight: '296.5mm', padding: '0' }} // A4 dimensions
       >
         <div style={{ 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { FileText, UserPlus } from 'lucide-react';
+import { FileText, UserPlus, Target, BookOpen, Zap } from 'lucide-react';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
@@ -13,95 +13,122 @@ export default function SignUp() {
     e.preventDefault();
     const result = await signUp(email, password);
     if (result.success) {
-      navigate('/builder');
+      navigate('/dashboard');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center">
-          <span className="bg-blue-600 p-2 rounded-lg text-white">
-            <FileText className="w-8 h-8" />
-          </span>
+    <div className="min-h-screen flex font-sans">
+      {/* Left Panel — Branding */}
+      <div className="hidden lg:flex w-[45%] gradient-dark text-white flex-col justify-between p-12 relative overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute top-20 right-0 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl" />
+        
+        <div className="relative z-10">
+          <div className="flex items-center gap-2.5 mb-16">
+            <div className="gradient-primary p-2 rounded-xl shadow-lg shadow-blue-500/25">
+              <FileText className="w-6 h-6" />
+            </div>
+            <span className="text-2xl font-black tracking-tight">ProResume</span>
+          </div>
+          
+          <h2 className="text-4xl font-black leading-tight mb-6">
+            Start your journey. <br />
+            <span className="text-violet-400">Land your dream job.</span>
+          </h2>
+          <p className="text-slate-400 text-lg leading-relaxed max-w-md">
+            Create unlimited resumes, optimize for ATS, and share with recruiters — all completely free.
+          </p>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Create your account
-        </h2>
+        
+        <div className="relative z-10 space-y-4">
+          {[
+            { icon: Target, text: 'Built-in ATS keyword scanner' },
+            { icon: BookOpen, text: 'Pre-written phrase library' },
+            { icon: Zap, text: 'Grammar & cliché checker' },
+          ].map((item, i) => (
+            <div key={i} className="flex items-center gap-3 text-slate-300">
+              <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                <item.icon className="w-4 h-4" />
+              </div>
+              <span className="text-sm font-medium">{item.text}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-200">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+      {/* Right Panel — Form */}
+      <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-20 bg-gray-50">
+        {/* Mobile logo */}
+        <div className="flex lg:hidden justify-center mb-8">
+          <div className="flex items-center gap-2">
+            <div className="gradient-primary p-2 rounded-xl text-white shadow-lg shadow-blue-500/25">
+              <FileText className="w-6 h-6" />
+            </div>
+            <span className="text-2xl font-black text-gray-900">ProResume</span>
+          </div>
+        </div>
+
+        <div className="w-full max-w-md mx-auto">
+          <h2 className="text-3xl font-black text-gray-900 mb-2">Create account</h2>
+          <p className="text-gray-500 mb-8">Get started with your free account today.</p>
+
+          <form className="space-y-5" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 border-l-4 border-red-400 p-4">
-                <div className="flex">
-                  <div className="ml-3">
-                    <p className="text-sm text-red-700">{error}</p>
-                  </div>
-                </div>
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                <p className="text-sm text-red-700 font-medium">{error}</p>
               </div>
             )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Email address</label>
-              <div className="mt-1">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-gray-700">Email</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm"
+                placeholder="you@example.com"
+              />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Password</label>
-              <div className="mt-1">
-                <input
-                  type="password"
-                  required
-                  minLength={6}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-gray-700">Password</label>
+              <input
+                type="password"
+                required
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm"
+                placeholder="Minimum 6 characters"
+              />
             </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-              >
-                {loading ? 'Creating account...' : (
-                   <span className="flex items-center gap-2">
-                     <UserPlus className="w-4 h-4" /> Sign up
-                   </span>
-                )}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex justify-center items-center gap-2 py-3.5 gradient-primary text-white rounded-xl text-sm font-bold hover:opacity-90 transition-all shadow-lg shadow-blue-500/25 disabled:opacity-50"
+            >
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Creating account...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <UserPlus className="w-4 h-4" /> Create free account
+                </span>
+              )}
+            </button>
           </form>
 
-          <div className="mt-6">
-             <div className="relative">
-               <div className="absolute inset-0 flex items-center">
-                 <div className="w-full border-t border-gray-300" />
-               </div>
-               <div className="relative flex justify-center text-sm">
-                 <span className="px-2 bg-white text-gray-500">
-                   Already have an account?
-                 </span>
-               </div>
-             </div>
-             
-             <div className="mt-6 text-center">
-                <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
-                   Sign in instead
-                </Link>
-             </div>
+          <div className="mt-8 text-center">
+            <span className="text-sm text-gray-500">Already have an account? </span>
+            <Link to="/login" className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors">
+              Sign in
+            </Link>
           </div>
         </div>
       </div>

@@ -8,7 +8,7 @@ import SkillsForm from './SkillsForm';
 import ProjectsForm from './ProjectsForm';
 import CertificationsForm from './CertificationsForm';
 import CustomSectionForm from './CustomSectionForm';
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, Download } from 'lucide-react';
 
 const STEP_LABELS = {
   [FORM_STEPS.PERSONAL_INFO]: 'Personal',
@@ -21,12 +21,13 @@ const STEP_LABELS = {
   [FORM_STEPS.CUSTOM_SECTIONS]: 'Custom',
 };
 
-export default function FormStepper() {
+export default function FormStepper({ onFinish }) {
   const { activeFormStep, setActiveFormStep, nextStep, prevStep } = useUIStore();
 
   const currentIndex = STEP_ORDER.indexOf(activeFormStep);
   const isFirstStep = currentIndex === 0;
   const isLastStep = currentIndex === STEP_ORDER.length - 1;
+  const progressPercent = ((currentIndex) / (STEP_ORDER.length - 1)) * 100;
 
   const renderActiveForm = () => {
     switch (activeFormStep) {
@@ -43,37 +44,50 @@ export default function FormStepper() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white border-r border-gray-200">
-      <div className="p-6 border-b border-gray-200 bg-gray-50/50">
+    <div className="flex flex-col h-full bg-white">
+      {/* Progress Header */}
+      <div className="px-6 pt-5 pb-4 border-b border-gray-100">
+        {/* Progress Bar */}
+        <div className="relative mb-4">
+          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div 
+              className="h-full gradient-primary rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Step Labels */}
         <nav aria-label="Progress">
           <ol role="list" className="flex items-center justify-between">
             {STEP_ORDER.map((step, index) => {
               const isActive = step === activeFormStep;
-              const isCompleted = STEP_ORDER.indexOf(activeFormStep) > index;
+              const isCompleted = currentIndex > index;
               
               return (
-                <li key={step} className="relative py-2 flex flex-col items-center group cursor-pointer" onClick={() => setActiveFormStep(step)}>
-                  <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                    {index < STEP_ORDER.length - 1 && (
-                       <div className={`h-0.5 w-full bg-gray-200 absolute right-[-50%] ${isCompleted ? 'bg-blue-600' : ''}`} />
-                    )}
-                  </div>
-                  <div className="relative flex items-center justify-center">
+                <li 
+                  key={step} 
+                  className="flex flex-col items-center cursor-pointer group"
+                  onClick={() => setActiveFormStep(step)}
+                >
+                  <div className="relative flex items-center justify-center mb-1.5">
                     {isCompleted ? (
-                      <span className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center ring-4 ring-white shadow-sm z-10 transition-transform group-hover:scale-110">
-                        <Check className="w-5 h-5 text-white" />
+                      <span className="h-7 w-7 rounded-full gradient-primary flex items-center justify-center shadow-sm shadow-blue-500/20 transition-transform group-hover:scale-110">
+                        <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
                       </span>
                     ) : isActive ? (
-                      <span className="h-8 w-8 rounded-full border-2 border-blue-600 bg-white flex items-center justify-center ring-4 ring-white shadow-sm z-10">
-                        <span className="h-2.5 w-2.5 rounded-full bg-blue-600 animate-pulse" />
+                      <span className="h-7 w-7 rounded-full border-2 border-blue-500 bg-blue-50 flex items-center justify-center">
+                        <span className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
                       </span>
                     ) : (
-                      <span className="h-8 w-8 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center ring-4 ring-white z-10 transition-colors group-hover:border-gray-400">
-                        <span className="text-gray-500 text-xs font-medium">{index + 1}</span>
+                      <span className="h-7 w-7 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center transition-colors group-hover:border-gray-300">
+                        <span className="text-gray-400 text-[10px] font-bold">{index + 1}</span>
                       </span>
                     )}
                   </div>
-                  <span className={`mt-2 text-xs font-medium ${isActive || isCompleted ? 'text-blue-600' : 'text-gray-500'}`}>
+                  <span className={`text-[10px] font-semibold tracking-wide ${
+                    isActive ? 'text-blue-600' : isCompleted ? 'text-blue-500' : 'text-gray-400'
+                  }`}>
                     {STEP_LABELS[step]}
                   </span>
                 </li>
@@ -83,27 +97,49 @@ export default function FormStepper() {
         </nav>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
+      {/* Form Content */}
+      <div className="flex-1 overflow-y-auto p-6 scroll-smooth custom-scrollbar">
         {renderActiveForm()}
       </div>
 
-      <div className="p-6 border-t border-gray-200 bg-gray-50/50 flex justify-between items-center">
+      {/* Navigation Footer */}
+      <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex justify-between items-center">
         <button
           onClick={prevStep}
           disabled={isFirstStep}
-          className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
         >
-          <ChevronLeft className="w-4 h-4 mr-1" />
+          <ChevronLeft className="w-4 h-4" />
           Previous
         </button>
         
+        <span className="text-xs font-semibold text-gray-400">
+          {currentIndex + 1} / {STEP_ORDER.length}
+        </span>
+
         <button
-          onClick={nextStep}
-          disabled={isLastStep}
-          className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-colors"
+          onClick={() => {
+            if (isLastStep && onFinish) {
+              onFinish();
+            } else if (!isLastStep) {
+              nextStep();
+            }
+          }}
+          className={`flex items-center gap-1.5 px-5 py-2.5 text-sm font-bold rounded-xl transition-all shadow-md ${
+            isLastStep 
+              ? 'gradient-primary text-white shadow-blue-500/25 hover:opacity-90' 
+              : 'gradient-primary text-white shadow-blue-500/25 hover:opacity-90'
+          }`}
         >
-          {isLastStep ? 'Finish' : 'Next'}
-          <ChevronRight className="w-4 h-4 ml-1" />
+          {isLastStep ? (
+            <>
+              <Download className="w-4 h-4" /> Export PDF
+            </>
+          ) : (
+            <>
+              Next <ChevronRight className="w-4 h-4" />
+            </>
+          )}
         </button>
       </div>
     </div>

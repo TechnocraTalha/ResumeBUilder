@@ -4,6 +4,9 @@ import Builder from './components/Builder';
 import Login from './components/auth/Login';
 import SignUp from './components/auth/SignUp';
 import AdminPanel from './components/AdminPanel';
+import LandingPage from './components/LandingPage';
+import Dashboard from './components/Dashboard';
+import PublicResume from './components/PublicResume';
 import { useAuthStore } from './store/authStore';
 
 function App() {
@@ -25,11 +28,13 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to={user ? "/builder" : "/login"} replace />} />
-      <Route path="/login" element={!user ? <Login /> : <Navigate to="/builder" replace />} />
-      <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/builder" replace />} />
-      <Route path="/builder" element={user ? <Builder /> : <Navigate to="/login" replace />} />
-      <Route path="/admin" element={isAdmin ? <AdminPanel /> : <Navigate to="/builder" replace />} />
+      <Route path="/" element={!user ? <LandingPage /> : <Navigate to="/dashboard" replace />} />
+      <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" replace />} />
+      <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/dashboard" replace />} />
+      <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" replace />} />
+      <Route path="/builder/:id" element={user ? <Builder /> : <Navigate to="/login" replace />} />
+      <Route path="/admin" element={isAdmin ? <AdminPanel /> : <Navigate to="/dashboard" replace />} />
+      <Route path="/v/:uid/:rid" element={<PublicResume />} />
     </Routes>
   );
 }

@@ -20,7 +20,7 @@ export default function AdminPanel() {
   useEffect(() => {
     // Extra guard to prevent flicker
     if (!user || user.email !== 'talhasiddiqui240@gmail.com') {
-      navigate('/builder');
+      navigate('/dashboard');
       return;
     }
 
@@ -64,7 +64,7 @@ export default function AdminPanel() {
                 </div>
              </div>
              <button 
-               onClick={() => navigate('/builder')}
+               onClick={() => navigate('/dashboard')}
                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition-colors shadow-sm"
              >
                 Exit to Builder

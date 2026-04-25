@@ -4,75 +4,19 @@ import { persist } from 'zustand/middleware';
 // Universal Data Schema (Crucial for ATS)
 const initialData = {
   personalInfo: {
-    fullName: 'John Doe',
-    email: 'hello@johndoe.com',
-    phone: '(555) 123-4567',
-    location: 'San Francisco, CA',
-    linkedin: 'linkedin.com/in/johndoe',
-    website: 'johndoe.com',
+    fullName: '',
+    email: '',
+    phone: '',
+    location: '',
+    linkedin: '',
+    website: '',
   },
-  summary: 'Experienced Software Engineer with a passion for building scalable web applications and optimizing backend architectures. Proven track record of leading teams and delivering high-impact projects.',
-  experience: [
-    {
-      id: '1',
-      company: 'Tech Corp Inc.',
-      position: 'Senior Frontend Engineer',
-      startDate: 'Jan 2021',
-      endDate: 'Present',
-      current: true,
-      description: 'Led the migration of legacy monolithic frontend to micro-frontends.',
-      highlights: [
-        'Improved load time by 40% through code splitting.',
-        'Mentored 3 junior developers.',
-      ],
-    },
-     {
-      id: '2',
-      company: 'Web Solutions Ltd.',
-      position: 'Web Developer',
-      startDate: 'Mar 2018',
-      endDate: 'Dec 2020',
-      current: false,
-      description: 'Developed and maintained responsive client websites.',
-      highlights: [
-        'Implemented modern UI/UX principles increasing user retention by 25%.',
-        'Built automated testing suite reducing bugs by 15%.',
-      ],
-    }
-  ],
-  education: [
-    {
-      id: '1',
-      institution: 'State University',
-      degree: 'B.S. in Computer Science',
-      field: 'Software Engineering',
-      startDate: 'Sep 2014',
-      endDate: 'May 2018',
-      gpa: '3.8',
-    },
-  ],
-  skills: [
-    { id: '1', category: 'Languages', items: 'JavaScript, TypeScript, Python, Java' },
-    { id: '2', category: 'Frameworks/Libraries', items: 'React, Node.js, Tailwind CSS' },
-    { id: '3', category: 'Tools', items: 'Git, Vite, AWS, Zustand' }
-  ],
-  certifications: [
-    {
-      id: '1',
-      name: 'AWS Certified Solutions Architect',
-      issuer: 'Amazon Web Services',
-      date: 'Aug 2023',
-    }
-  ],
-  projects: [
-    {
-      id: '1',
-      name: 'E-commerce Platform Refactor',
-      description: 'Redesigned core checkout flow for high-volume store.',
-      technologies: ['React', 'Redux', 'Stripe API'],
-      link: 'github.com/johndoe/ecommerce',
-    },
-  ],
+  summary: '',
+  experience: [],
+  education: [],
+  skills: [],
+  certifications: [],
+  projects: [],
   customSections: [],
 };
 
@@ -80,7 +24,10 @@ export const useResumeStore = create(
   persist(
     (set) => ({
       resumeData: initialData,
+      activeResumeId: null,
       
+      setActiveResumeId: (id) => set({ activeResumeId: id }),
+
       setResumeData: (data) => set((state) => {
         // Deep merge to ensure arrays and objects exist, preventing crashes on old saves
         const mergedData = {
@@ -132,6 +79,14 @@ export const useResumeStore = create(
       },
     })),
 
+  reorderExperience: (startIndex, endIndex) =>
+    set((state) => {
+      const result = Array.from(state.resumeData.experience);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      return { resumeData: { ...state.resumeData, experience: result } };
+    }),
+
   addEducation: () =>
     set((state) => ({
       resumeData: {
@@ -158,6 +113,14 @@ export const useResumeStore = create(
         education: state.resumeData.education.filter((edu) => edu.id !== id),
       },
     })),
+
+  reorderEducation: (startIndex, endIndex) =>
+    set((state) => {
+      const result = Array.from(state.resumeData.education);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      return { resumeData: { ...state.resumeData, education: result } };
+    }),
 
   addSkillCategory: () =>
     set((state) => ({
@@ -186,6 +149,14 @@ export const useResumeStore = create(
       },
     })),
 
+  reorderSkillCategory: (startIndex, endIndex) =>
+    set((state) => {
+      const result = Array.from(state.resumeData.skills);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      return { resumeData: { ...state.resumeData, skills: result } };
+    }),
+
   addProject: () =>
     set((state) => ({
       resumeData: {
@@ -213,6 +184,14 @@ export const useResumeStore = create(
       },
     })),
 
+  reorderProject: (startIndex, endIndex) =>
+    set((state) => {
+      const result = Array.from(state.resumeData.projects);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      return { resumeData: { ...state.resumeData, projects: result } };
+    }),
+
   addCertification: () =>
     set((state) => ({
       resumeData: {
@@ -239,6 +218,14 @@ export const useResumeStore = create(
             certifications: state.resumeData.certifications.filter((cert) => cert.id !== id),
           },
         })),
+
+      reorderCertification: (startIndex, endIndex) =>
+        set((state) => {
+          const result = Array.from(state.resumeData.certifications);
+          const [removed] = result.splice(startIndex, 1);
+          result.splice(endIndex, 0, removed);
+          return { resumeData: { ...state.resumeData, certifications: result } };
+        }),
 
       addCustomSection: () =>
         set((state) => ({

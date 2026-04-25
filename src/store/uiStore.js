@@ -21,7 +21,7 @@ export const FORM_STEPS = {
   CUSTOM_SECTIONS: 'CUSTOM_SECTIONS',
 };
 
-// Map steps to sequential order for Stepper
+// Map steps to sequential order for Stepper (ATS-optimized order: Skills before Experience)
 export const STEP_ORDER = [
   FORM_STEPS.PERSONAL_INFO,
   FORM_STEPS.SUMMARY,
@@ -38,12 +38,18 @@ export const useUIStore = create(
     (set) => ({
       activeTemplate: TEMPLATES.ATS_PURIST,
       activeFormStep: FORM_STEPS.PERSONAL_INFO,
-      isPreviewMode: false, // For mobile responsiveness
-      fontScale: 1.0, // Scale multiplier
+      isPreviewMode: false,
+      fontScale: 1.0,
+      themeColor: '#2563eb', // Default Blue
+      fontFamily: 'Inter',   // Default Font
 
       setActiveTemplate: (template) => set({ activeTemplate: template }),
       
       setFontScale: (scale) => set({ fontScale: scale }),
+      
+      setThemeColor: (color) => set({ themeColor: color }),
+      
+      setFontFamily: (font) => set({ fontFamily: font }),
       
       setActiveFormStep: (step) => set({ activeFormStep: step }),
 
