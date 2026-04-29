@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collectionGroup, getDocs } from 'firebase/firestore';
 import { db } from '../utils/firebase';
 import { useAuthStore } from '../store/authStore';
 import { useResumeStore } from '../store/resumeStore';
@@ -26,7 +26,7 @@ export default function AdminPanel() {
 
     const fetchResumes = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'resumes'));
+        const querySnapshot = await getDocs(collectionGroup(db, 'resumes'));
         const fetchedResumes = [];
         querySnapshot.forEach((doc) => {
            fetchedResumes.push({

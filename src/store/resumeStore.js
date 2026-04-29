@@ -2,7 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 // Universal Data Schema (Crucial for ATS)
-const initialData = {
+export const initialData = {
+  title: 'Untitled Resume',
   personalInfo: {
     fullName: '',
     email: '',
@@ -51,6 +52,9 @@ export const useResumeStore = create(
 
   updateSummary: (summary) =>
     set((state) => ({ resumeData: { ...state.resumeData, summary } })),
+
+  updateTitle: (title) =>
+    set((state) => ({ resumeData: { ...state.resumeData, title } })),
 
   addExperience: () =>
     set((state) => ({

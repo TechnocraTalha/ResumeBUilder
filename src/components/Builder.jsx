@@ -3,12 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import FormStepper from './forms/FormStepper';
 import TemplateRenderer from './templates/TemplateRenderer';
 import { useUIStore, TEMPLATES } from '../store/uiStore';
-import { exportToDocx } from '../utils/exportDOCX';
-import { exportToPDF } from '../utils/exportPDF';
+
 import { useAuthStore } from '../store/authStore';
 import { db } from '../utils/firebase';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { Download, FileText, Settings, Eye, Menu, LogOut, Cloud, ShieldCheck, Sparkles, ArrowLeft, Target, ShieldAlert } from 'lucide-react';
+import { Download, FileText, Settings, Eye, Menu, LogOut, Cloud, ShieldCheck, Sparkles, ArrowLeft, Target, ShieldAlert, Edit2 } from 'lucide-react';
 import { useResumeStore } from '../store/resumeStore';
 import AIGuideModal from './AIGuideModal';
 import ATSScoreModal from './ATSScoreModal';
@@ -24,14 +23,32 @@ function Builder() {
   const [isAIGuideOpen, setIsAIGuideOpen] = React.useState(false);
   const [isATSScoreOpen, setIsATSScoreOpen] = React.useState(false);
   const [isScannerOpen, setIsScannerOpen] = React.useState(false);
+  const [isExportingPDF, setIsExportingPDF] = React.useState(false);
+  const [isExportingDOCX, setIsExportingDOCX] = React.useState(false);
 
-  const handleExportDocx = () => {
-    exportToDocx(resumeData);
+  const handleExportDocx = async () => {
+    setIsExportingDOCX(true);
+    try {
+      const { exportToDocx } = await import('../utils/exportDOCX');
+      exportToDocx(resumeData);
+    } catch (e) {
+      console.error("Failed to export DOCX:", e);
+    } finally {
+      setIsExportingDOCX(false);
+    }
   };
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
     if (printRef.current) {
-      exportToPDF(printRef.current, `${resumeData.personalInfo.fullName.replace(/\s+/g, '_')}_Resume.pdf`);
+      setIsExportingPDF(true);
+      try {
+        const { exportToPDF } = await import('../utils/exportPDF');
+        exportToPDF(printRef.current, `${resumeData.personalInfo.fullName.replace(/\s+/g, '_')}_Resume.pdf`);
+      } catch (e) {
+        console.error("Failed to export PDF:", e);
+      } finally {
+        setIsExportingPDF(false);
+      }
     }
   };
 
@@ -111,10 +128,23 @@ function Builder() {
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2">
-              <span className="gradient-primary p-1.5 rounded-lg text-white shadow-md shadow-blue-500/20">
+              <button 
+                onClick={() => navigate('/dashboard')}
+                className="gradient-primary p-1.5 rounded-lg text-white shadow-md shadow-amber-500/20 hover:opacity-90 transition-opacity cursor-pointer"
+                title="Back to Dashboard"
+              >
                  <FileText className="w-4 h-4" />
-              </span>
-              <h1 className="text-lg font-black text-gray-900 tracking-tight">ProResume</h1>
+              </button>
+              <div className="relative flex items-center group">
+                <input
+                  type="text"
+                  value={resumeData.title || ''}
+                  onChange={(e) => useResumeStore.getState().updateTitle(e.target.value)}
+                  placeholder="Untitled Resume"
+                  className="text-lg font-black text-gray-900 tracking-tight bg-transparent border-none outline-none focus:ring-2 focus:ring-amber-500/50 rounded pl-1.5 pr-6 py-0.5 w-48 sm:w-64 truncate hover:bg-gray-100 transition-colors cursor-text"
+                />
+                <Edit2 className="w-3.5 h-3.5 text-gray-400 absolute right-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -204,15 +234,31 @@ function Builder() {
           {/* Export Buttons */}
           <button
             onClick={handleExportPDF}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-gray-600 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors"
+            disabled={isExportingPDF}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-gray-600 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
           >
-            <FileText className="w-3.5 h-3.5" /> PDF
+            {isExportingPDF ? (
+              <span className="flex items-center gap-2">
+                <div className="w-3.5 h-3.5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+                PDF...
+              </span>
+            ) : (
+              <><FileText className="w-3.5 h-3.5" /> PDF</>
+            )}
           </button>
           <button
             onClick={handleExportDocx}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white gradient-primary rounded-lg hover:opacity-90 transition-all shadow-sm shadow-blue-500/20"
+            disabled={isExportingDOCX}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white gradient-primary rounded-lg hover:opacity-90 transition-all shadow-sm shadow-blue-500/20 disabled:opacity-50"
           >
-            <Download className="w-3.5 h-3.5" /> DOCX
+            {isExportingDOCX ? (
+              <span className="flex items-center gap-2">
+                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                DOCX...
+              </span>
+            ) : (
+              <><Download className="w-3.5 h-3.5" /> DOCX</>
+            )}
           </button>
         </div>
 
